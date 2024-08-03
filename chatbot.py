@@ -6,21 +6,26 @@ os.environ["OPENAI_API_KEY"] = "sk-proj-S1BI7CLEpE9ISnNeEdSoT3BlbkFJ5siFAJjc2XbP
 
 llm = ChatOpenAI(model = "gpt-3.5-turbo")
 
+def create_msg(author: str, msg: str):
+    st.chat_message(author).markdown(msg)
+    st.session_state.messages.append({"role":author,"content":msg})
+
 st.title("TestAI")
+
+sidebar = st.sidebar
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "chat_num" not in st.session_state:
+    st.session_state.chat_num = 0
+    
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-
 if prompt := st.chat_input("Write here"):
-    st.chat_message("user").markdown(prompt)
-    st.session_state.messages.append({"role":"user","content":prompt})
-    ai_resp = llm(prompt)
+    create_msg("user",prompt)
+    ai_resp = llm.invoke(st.session_state.messages)
     if ai_resp:
-        st.chat_message("ai").write(ai_resp.content)
-        st.session_state.messages.append({"role":"ai","content":ai_resp.content})
-
+        create_msg("ai", ai_resp.content)
