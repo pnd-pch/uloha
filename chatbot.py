@@ -1,6 +1,7 @@
 import os
 from langchain_openai import ChatOpenAI 
 import streamlit as st
+import time
 
 os.environ["OPENAI_API_KEY"] = "sk-proj-S1BI7CLEpE9ISnNeEdSoT3BlbkFJ5siFAJjc2XbPJjdPEMoT"
 
@@ -14,8 +15,16 @@ def new_chat():
     st.session_state.messages.clear()
     st.session_state.chat_num = len(st.session_state.chats)
 
+def stream(msg: str):
+    for word in msg.split(" "):
+        yield word + " "
+        time.sleep(0.12)
+
 def create_msg(author: str, msg: str):
-    st.chat_message(author).markdown(msg)
+    if author == "ai":
+        st.chat_message(author).write_stream(stream(msg))
+    else:
+        st.chat_message(author).markdown(msg)
     st.session_state.messages.append({"role":author,"content":msg})
 
 st.title("TestAI")
