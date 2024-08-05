@@ -3,9 +3,9 @@ from langchain_openai import ChatOpenAI
 import streamlit as st
 import time
 
-os.environ["OPENAI_API_KEY"] = "sk-proj-S1BI7CLEpE9ISnNeEdSoT3BlbkFJ5siFAJjc2XbPJjdPEMoT"
+api_key = os.getenv("OPENAI_API_KEY")
 
-llm = ChatOpenAI(model = "gpt-3.5-turbo")
+llm = ChatOpenAI(model = "gpt-3.5-turbo", api_key=api_key)
 
 def new_chat():
     if len(st.session_state.chats) == st.session_state.chat_num:
@@ -15,6 +15,7 @@ def new_chat():
     st.session_state.messages.clear()
     st.session_state.chat_num = len(st.session_state.chats)
 
+#typewriter animation
 def stream(msg: str):
     for word in msg.split(" "):
         yield word + " "
@@ -34,6 +35,7 @@ new_chat_button = sidebar.button("New chat")
 if new_chat_button:
     new_chat()
 
+# session_state setup
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -43,11 +45,13 @@ if "chats" not in st.session_state:
 if "chat_num" not in st.session_state:
     st.session_state.chat_num = 0
 
+# chat buttons
 for chat in range(len(st.session_state.chats)):
     if sidebar.button(f"Chat {chat}"):
         st.session_state.messages = st.session_state.chats[chat]
         st.session_state.chat_num = chat
 
+# messages stay on screen 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
