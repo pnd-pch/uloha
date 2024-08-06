@@ -1,11 +1,13 @@
 import os
-from langchain_openai import ChatOpenAI 
+from langchain_openai import ChatOpenAI
 import streamlit as st
 import time
+from dotenv import load_dotenv
 
+load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-llm = ChatOpenAI(model = "gpt-3.5-turbo", api_key=api_key)
+llm = ChatOpenAI(api_key=api_key, model="gpt-3.5-turbo")
 
 def new_chat():
     if len(st.session_state.chats) == st.session_state.chat_num:
